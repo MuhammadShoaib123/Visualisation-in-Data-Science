@@ -33,13 +33,13 @@ interactive visualisations to answer data-driven questions about European footba
 
 | File | Chart Type | Question |
 |---|---|---|
-| `output/viz1_match_outcomes.html` | Stacked Bar Chart | Q1 — Match outcome % per league |
-| `output/viz2_tactics_vs_success.html` | Scatter Plot + OLS trendline | Q1 — Tactical attributes vs season goal difference |
-| `output/viz3_skill_evolution.html` | Multi-Line Chart | Q2 — Player skill trends 2008–2016 |
-| `output/viz4_lollipop_all_players.html` | Diverging Lollipop | Q3 — Elite vs average (all players) |
-| `output/viz4_lollipop_defenders_df.html` | Diverging Lollipop | Q3 — Elite vs average (defenders) |
-| `output/viz4_lollipop_midfielders_mf.html` | Diverging Lollipop | Q3 — Elite vs average (midfielders) |
-| `output/viz4_lollipop_forwards_fw.html` | Diverging Lollipop | Q3 — Elite vs average (forwards) |
+| `viz1_match_outcomes.html` | Stacked Bar Chart | Q1 — Match outcome % per league |
+| `viz2_tactics_vs_success.html` | Scatter Plot + OLS trendline | Q1 — Tactical attributes vs season goal difference |
+| `viz3_skill_evolution.html` | Multi-Line Chart | Q2 — Player skill trends 2008–2016 |
+| `viz4_lollipop_all_players.html` | Diverging Lollipop | Q3 — Elite vs average (all players) |
+| `viz4_lollipop_defenders_df.html` | Diverging Lollipop | Q3 — Elite vs average (defenders) |
+| `viz4_lollipop_midfielders_mf.html` | Diverging Lollipop | Q3 — Elite vs average (midfielders) |
+| `viz4_lollipop_forwards_fw.html` | Diverging Lollipop | Q3 — Elite vs average (forwards) |
 
 ---
 
@@ -48,21 +48,18 @@ interactive visualisations to answer data-driven questions about European footba
 ### 1. Get the dataset
 Download the **European Soccer Database** from Kaggle:  
 https://www.kaggle.com/datasets/hugomathien/soccer  
-Extract all CSV files into a local folder, e.g.:  
-`C:\your\path\VDS2526 Football\`
+Extract all CSV files into a local folder.  
+Add the dataset to the \data folder in the working directory to ensure this works properly.
 
 ### 2. Install dependencies
+
+Install the required Python libraries before running the project:
+
 ```bash
 pip install plotly pandas numpy scipy statsmodels
 ```
 
-### 3. Update the data path
-Open `VDS2526_Group01_Football_Visualisations.py` and update **line 20**:
-```python
-path = r"C:\your\path\VDS2526 Football" + "\\"
-```
-
-### 4. Run the script
+### 3. Run the script
 ```bash
 python VDS2526_Group01_Football_Visualisations.py
 ```
@@ -87,9 +84,8 @@ Open any `.html` file in a web browser — no server required.
 | Team | 299 | Team names |
 | League | 11 | League names |
 | PositionReference | 99 | Deriving player roles (GK/DF/MF/FW) |
-
-> ⚠️ CSV files are **not included** in this repository due to size.  
-> Download from Kaggle using the link above.
+ 
+> Download from Kaggle using the link above or use the zip data file (VDS2526 Football.zip) from blackboard.
 
 ---
 
