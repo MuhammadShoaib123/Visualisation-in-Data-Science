@@ -1,14 +1,18 @@
 # VDS2526 — Group 1 | Football Dataset
 
+# Yogesh More
+# Mansoor Khurram
+# Murtaza
+# Shoaib
+
 
 # %% CELL 1: Install & Imports
 
+import os
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-from pathlib import Path
 import plotly.io as pio
 
 pio.renderers.default = "browser"
@@ -17,14 +21,15 @@ print("Libraries imported successfully.")
 
 # %% CELL 2: Load Datasets
 
-path = ""
+current_dir = os.path.dirname(os.path.abspath(__file__))
+data_path = os.path.join(current_dir, "data")
 
-match       = pd.read_csv(path + "Match.csv")
-league      = pd.read_csv(path + "League.csv")
-team_attr   = pd.read_csv(path + "Team_Attributes.csv")
-player_attr = pd.read_csv(path + "Player_Attributes.csv")
-pos_ref     = pd.read_csv(path + "PositionReference.csv")
-team        = pd.read_csv(path + "Team.csv")
+match       = pd.read_csv(os.path.join(data_path, "Match.csv"))
+league      = pd.read_csv(os.path.join(data_path, "League.csv"))
+team_attr   = pd.read_csv(os.path.join(data_path, "Team_Attributes.csv"))
+player_attr = pd.read_csv(os.path.join(data_path, "Player_Attributes.csv"))
+pos_ref     = pd.read_csv(os.path.join(data_path, "PositionReference.csv"))
+team        = pd.read_csv(os.path.join(data_path, "Team.csv"))
 
 print(f"Match:             {match.shape}")
 print(f"League:            {league.shape}")
@@ -43,43 +48,41 @@ print(f"Team:              {team.shape}")
 
 # %% CELL 3: Data Preparation For Plot 1: Match Outcomes per League
 
-def get_outcome(row):
-    if row["home_team_goal"] > row["away_team_goal"]:
-        return "Home Win"
-    elif row["home_team_goal"] < row["away_team_goal"]:
-        return "Away Win"
-    else:
-        return "Draw"
-
+# Combine match and league data
 df_viz1 = match.merge(league[["id", "name"]], left_on="league_id", right_on="id")
-df_viz1["outcome"] = df_viz1.apply(get_outcome, axis=1)
 
-outcome_counts = (
-    df_viz1.groupby(["name", "outcome"])
-    .size()
-    .reset_index(name="match_count")
-)
-outcome_counts["percentage"] = outcome_counts.groupby("name")["match_count"].transform(
-    lambda x: (x / x.sum()) * 100
-)
+home_goals = df_viz1["home_team_goal"].values
+away_goals = df_viz1["away_team_goal"].values
 
-# Sort leagues by Home Win percentage (descending)
-hw_order = (
-    outcome_counts[outcome_counts["outcome"] == "Home Win"]
-    .sort_values("percentage", ascending=False)["name"]
-    .tolist()
-)
+outcomes = []
+for h, a in zip(home_goals, away_goals):
+    if h > a:
+        outcomes.append("Home Win")
+    elif h < a:
+        outcomes.append("Away Win")
+    else:
+        outcomes.append("Draw")
 
-# print("Viz 1 data ready — outcome counts per league:")
-# print(outcome_counts.groupby("outcome")["match_count"].sum())
+df_viz1["outcome"] = outcomes
+
+outcome_counts = df_viz1.groupby(["name", "outcome"]).size().reset_index(name="match_count")
+
+# Calculate the % for bars
+total_matches = outcome_counts.groupby("name")["match_count"].transform("sum")
+outcome_counts["percentage"] = (outcome_counts["match_count"] / total_matches) * 100
+
+# Sort the leagues by most Home Wins
+home_wins_only = outcome_counts[outcome_counts["outcome"] == "Home Win"]
+sorted_home_wins = home_wins_only.sort_values("percentage", ascending=False)
+hw_order = sorted_home_wins["name"].tolist()
 
 
 # %% CELL 4: Plot 1
 
 color_map = {
-    "Home Win": "#2980b9",   # Blue  — home advantage
-    "Draw":     "#95a5a6",   # Grey  — neutral (NOT black; avoids invisible stacks)
-    "Away Win": "#e74c3c",   # Red   — away team wins
+    "Home Win": "#2980b9",
+    "Draw":     "#95a5a6",
+    "Away Win": "#e74c3c",
 }
 
 fig1 = px.bar(
@@ -89,10 +92,10 @@ fig1 = px.bar(
     color="outcome",
     color_discrete_map=color_map,
     category_orders={
-        "name": hw_order,                               # sorted by Home Win %
-        "outcome": ["Home Win", "Draw", "Away Win"],    # fixed stack order
+        "name": hw_order,
+        "outcome": ["Home Win", "Draw", "Away Win"],
     },
-    title="Q1 — Match Outcomes Across 11 European Leagues (2008–2016)",
+    title="Match Outcomes Across 11 European Leagues (2008–2016)",
     labels={
         "name": "League",
         "percentage": "Match Outcome (%)",
@@ -110,10 +113,8 @@ fig1.update_layout(
     yaxis_title="Percentage of Matches (%)",
     legend_title="Match Result",
     height=520,
-    title_font_size=15,
 )
 
-# Annotation: highlight the league with the highest home win rate
 top_league = hw_order[0]
 top_hw_pct = outcome_counts[
     (outcome_counts["name"] == top_league) & (outcome_counts["outcome"] == "Home Win")
@@ -131,9 +132,7 @@ fig1.add_annotation(
 )
 
 fig1.show()
-
 fig1.write_html("viz1_match_outcomes.html")
-print("Viz 1 rendered and saved to viz1_match_outcomes.html")
 
 
 # ════════════════════════════════════════════════════════════
@@ -262,7 +261,6 @@ fig2.add_hline(
 
 fig2.show()
 fig2.write_html("viz2_tactics_vs_success.html")
-print("Viz 2 rendered and saved to viz2_tactics_vs_success.html")
 
 # NOTE: To explore other tactical attributes, re-run with:
 #   x="chanceCreationShooting"
@@ -326,8 +324,8 @@ df_long = df_trends.melt(
 )
 df_long["skill_label"] = df_long["skill"].map(skill_labels)
 
-print("Viz 3 data ready — trend data shape:", df_trends.shape)
-print("Year range:", df_trends["year"].min(), "—", df_trends["year"].max())
+# print("Viz 3 data ready — trend data shape:", df_trends.shape)
+# print("Year range:", df_trends["year"].min(), "—", df_trends["year"].max())
 
 
 # %% CELL 8: Plot 3
@@ -384,7 +382,6 @@ fig3.add_annotation(
 
 fig3.show()
 fig3.write_html("viz3_skill_evolution.html")
-print("Viz 3 rendered and saved to viz3_skill_evolution.html")
 
 
 # ════════════════════════════════════════════════════════════
@@ -440,10 +437,10 @@ pa_role = pa_clean.merge(
 )
 pa_role["tier"] = np.where(pa_role["overall_rating"] >= 85, "Elite", "Average")
 
-print("Role distribution (PositionReference):")
-print(pa_role["role_y"].value_counts())
-print(f"\nElite players:   {(pa_role['tier']=='Elite').sum():,} records")
-print(f"Average players: {(pa_role['tier']=='Average').sum():,} records")
+# print("Role distribution (PositionReference):")
+# print(pa_role["role_y"].value_counts())
+# print(f"\nElite players:   {(pa_role['tier']=='Elite').sum():,} records")
+# print(f"Average players: {(pa_role['tier']=='Average').sum():,} records")
 
 
 # %% CELL 10: Data Preparation
@@ -477,13 +474,11 @@ diff_data = {label: compute_diff(df) for label, df in roles_to_plot.items()}
 # %% CELL 11: Plot 4
 
 def plot_lollipop(title_suffix, diff_df):
-    """Diverging lollipop chart: stems from 0, dots at diff value."""
     colors = ["#e67e22" if d > 0 else "#7f8c8d" for d in diff_df["diff"]]
 
     fig = go.Figure()
 
-    # Stems (line from 0 to diff for each skill)
-    for _, row in diff_df.iterrows():
+    for idx, row in diff_df.iterrows():
         fig.add_shape(
             type="line",
             x0=0, x1=row["diff"],
@@ -491,7 +486,6 @@ def plot_lollipop(title_suffix, diff_df):
             line=dict(color="#555555", width=2),
         )
 
-    # Dot heads with value labels
     fig.add_trace(go.Scatter(
         x=diff_df["diff"],
         y=diff_df["skill"],
@@ -503,16 +497,16 @@ def plot_lollipop(title_suffix, diff_df):
         ),
         text=[f" {v:+.1f}" for v in diff_df["diff"]],
         textposition="middle right",
-        hovertemplate="<b>%{y}</b><br>Elite − Average: %{x:.2f}<extra></extra>",
+        hovertemplate="<b>%{y}</b><br>Difference: %{x:.2f}<extra></extra>",
         showlegend=False,
     ))
 
-    # Zero reference line
+    # Dashed Line
     fig.add_vline(x=0, line_dash="dash", line_color="black", line_width=1.5)
 
-    # Annotate top 2 most-differentiating skills
-    top2 = diff_df.nlargest(2, "diff")
-    for _, row in top2.iterrows():
+    # Annotate top 2 key differences
+    top2_skills = diff_df.nlargest(2, "diff")
+    for idx, row in top2_skills.iterrows():
         fig.add_annotation(
             x=row["diff"] + 0.3,
             y=row["skill"],
@@ -528,33 +522,13 @@ def plot_lollipop(title_suffix, diff_df):
         yaxis_title="Skill Attribute",
         template="plotly_white",
         height=500,
-        xaxis=dict(zeroline=True, zerolinewidth=2, zerolinecolor="black"),
         margin=dict(l=140, r=180),
-        title_font_size=14,
     )
+    
     return fig
-
 
 for role_label, d_df in diff_data.items():
     fig = plot_lollipop(role_label, d_df)
-    fig.show()
     safe_name = role_label.lower().replace(" ", "_").replace("(", "").replace(")", "")
     fig.write_html(f"viz4_lollipop_{safe_name}.html")
-    # print(f"  → {role_label} rendered and saved.")
-
-
-# ════════════════════════════════════════════════════════════
-# Summary
-# ════════════════════════════════════════════════════════════
-print("\n" + "="*60)
-print("ALL 4 VISUALISATIONS COMPLETE")
-print("="*60)
-print("Files saved in the output/ folder:")
-print("  viz1_match_outcomes.html")
-print("  viz2_tactics_vs_success.html")
-print("  viz3_skill_evolution.html")
-print("  viz4_lollipop_all_players.html")
-print("  viz4_lollipop_defenders_df.html")
-print("  viz4_lollipop_midfielders_mf.html")
-print("  viz4_lollipop_forwards_fw.html")
-
+    fig.show()
