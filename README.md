@@ -1,7 +1,7 @@
 # VDS2526 — Group 1 | Football Dataset Visualisations
 
 **Course:** Visualisation in Data Science (VDS2526) — 2025/2026  
-**Instructor:** Inigo  
+**Instructor:** Prof. dr. Inigo BERMEJO DELGADO  
 **Group:** Group 1  
 **Members:**
 - Mansoor Khurram (2505888)
