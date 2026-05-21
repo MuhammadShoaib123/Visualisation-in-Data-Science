@@ -451,7 +451,7 @@ def compute_diff(subset_df):
 
 roles_to_plot = {
     "All Players":      pa_role,
-    "Defenders (DF)":   pa_role[pa_role["role_y"] == "DF"],
+    "Defenders (DF)":   pa_role[pa_role["role_y"] == "BK"],
     "Midfielders (MF)": pa_role[pa_role["role_y"] == "MF"],
     "Forwards (FW)":    pa_role[pa_role["role_y"] == "FW"],
 }
