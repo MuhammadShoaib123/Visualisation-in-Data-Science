@@ -17,7 +17,7 @@ print("Libraries imported successfully.")
 
 # %%── CELL 2: Load All Datasets ────────────────────────────────
 
-path = r"C:\yogesh\viz\VDS2526 Football" + "\\"
+path = ""
 
 match       = pd.read_csv(path + "Match.csv")
 league      = pd.read_csv(path + "League.csv")
