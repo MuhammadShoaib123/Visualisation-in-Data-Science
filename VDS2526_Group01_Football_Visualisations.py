@@ -1,9 +1,9 @@
 # VDS2526 — Group 1 | Football Dataset
 
-# Yogesh More
-# Mansoor Khurram
-# Murtaza
-# Shoaib
+# Mansoor Khurram (2505888)
+# Murtaza Javed (2501823)
+# Muhammad Shoaib (2501708)
+# Yogesh Tarachand More (2469856)
 
 
 # %% CELL 1: Install & Imports
@@ -329,6 +329,7 @@ df_long["skill_label"] = df_long["skill"].map(skill_labels)
 
 
 # %% CELL 8: Plot 3
+
 skill_colors = {
     "Sprint Speed (Speed)":          "#e74c3c",
     "Short Passing (Passing)":       "#2980b9",
@@ -338,32 +339,58 @@ skill_colors = {
     "Dribbling (Technical)":         "#f39c12",
 }
 
-fig3 = px.line(
-    df_long,
-    x="year",
-    y="mean_value",
-    color="skill_label",
-    color_discrete_map=skill_colors,
-    markers=True,
-    labels={
-        "year": "Year",
-        "mean_value": "Mean Attribute Value (0–100)",
-        "skill_label": "Skill Category",
-    },
-    title="Q2 — Player Skill Profile Evolution Across European Football (2008–2016)",
-    template="plotly_white",
-)
+league_options = ["All Leagues"] + sorted(league["name"].dropna().unique().tolist())
 
-fig3.update_layout(
-    xaxis=dict(tickmode="linear", dtick=1, title="Season Year"),
-    yaxis_title="Mean Attribute Value (0–100)",
-    legend_title="Skill Category",
-    height=520,
-    hovermode="x unified",
-    title_font_size=15,
-)
+fig3 = go.Figure()
 
-# Annotation: mark the skill with the largest absolute change over the period
+for league_name in league_options:
+    if league_name == "All Leagues":
+        subset = pa_clean
+    else:
+        league_id = league[league["name"] == league_name]["id"].values[0]
+        players_in_league = []
+        for col in [f"home_player_{i}" for i in range(1, 12)] + [f"away_player_{i}" for i in range(1, 12)]:
+            if col in match.columns:
+                players_in_league.extend(match[match["league_id"] == league_id][col].dropna().tolist())
+        players_in_league = list(set(players_in_league))
+        subset = pa_clean[pa_clean["player_api_id"].isin(players_in_league)]
+
+    df_sub = (
+        subset.groupby("year")[skill_cols]
+        .mean()
+        .reset_index()
+        .query("year >= 2008 and year <= 2016")
+    )
+
+    for skill in skill_cols:
+        fig3.add_trace(go.Scatter(
+            x=df_sub["year"],
+            y=df_sub[skill],
+            mode="lines+markers",
+            name=skill_labels[skill],
+            line=dict(color=skill_colors[skill_labels[skill]]),
+            visible=(league_name == "All Leagues"),
+            legendgroup=skill_labels[skill],
+            showlegend=(league_name == "All Leagues"),
+            hovertemplate=f"<b>{skill_labels[skill]}</b><br>Year: %{{x}}<br>Value: %{{y:.1f}}<extra>{league_name}</extra>",
+        ))
+
+# dropdown buttons
+n_skills = len(skill_cols)
+n_leagues = len(league_options)
+
+buttons = []
+for i, league_name in enumerate(league_options):
+    visibility = [False] * (n_skills * n_leagues)
+    for j in range(n_skills):
+        visibility[i * n_skills + j] = True
+    buttons.append(dict(
+        label=league_name,
+        method="update",
+        args=[{"visible": visibility}],
+    ))
+
+# Annotation for peak skill
 max_change_raw  = (df_trends[skill_cols].iloc[-1] - df_trends[skill_cols].iloc[0]).abs().idxmax()
 top_skill_label = skill_labels[max_change_raw]
 peak_year       = df_trends.loc[df_trends[max_change_raw].idxmax(), "year"]
@@ -378,6 +405,24 @@ fig3.add_annotation(
     font=dict(size=10),
     bgcolor="white",
     bordercolor="#aaa",
+)
+
+fig3.update_layout(
+    updatemenus=[dict(
+        buttons=buttons,
+        direction="down",
+        x=1.15,
+        y=1.1,
+        showactive=True,
+    )],
+    xaxis=dict(tickmode="linear", dtick=1, title="Season Year"),
+    yaxis_title="Mean Attribute Value (0–100)",
+    legend_title="Skill Category",
+    height=520,
+    hovermode="x unified",
+    title="Q2 — Player Skill Profile Evolution Across European Football (2008–2016)",
+    title_font_size=15,
+    template="plotly_white",
 )
 
 fig3.show()
@@ -532,3 +577,5 @@ for role_label, d_df in diff_data.items():
     safe_name = role_label.lower().replace(" ", "_").replace("(", "").replace(")", "")
     fig.write_html(f"viz4_lollipop_{safe_name}.html")
     fig.show()
+
+# %%
