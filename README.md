@@ -50,8 +50,12 @@ Download the **European Soccer Database** from Kaggle:
 https://www.kaggle.com/datasets/hugomathien/soccer  
 Extract all CSV files into a local folder, e.g.:  
 `C:\your\path\VDS2526 Football\`
+Add the data to the /data folder in the working directory to ensure this works properly.
 
 ### 2. Install dependencies
+
+Install the required Python libraries before running the project:
+
 ```bash
 pip install plotly pandas numpy scipy statsmodels
 ```
