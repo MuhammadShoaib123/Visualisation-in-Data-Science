@@ -33,13 +33,13 @@ interactive visualisations to answer data-driven questions about European footba
 
 | File | Chart Type | Question |
 |---|---|---|
-| `output/viz1_match_outcomes.html` | Stacked Bar Chart | Q1 — Match outcome % per league |
-| `output/viz2_tactics_vs_success.html` | Scatter Plot + OLS trendline | Q1 — Tactical attributes vs season goal difference |
-| `output/viz3_skill_evolution.html` | Multi-Line Chart | Q2 — Player skill trends 2008–2016 |
-| `output/viz4_lollipop_all_players.html` | Diverging Lollipop | Q3 — Elite vs average (all players) |
-| `output/viz4_lollipop_defenders_df.html` | Diverging Lollipop | Q3 — Elite vs average (defenders) |
-| `output/viz4_lollipop_midfielders_mf.html` | Diverging Lollipop | Q3 — Elite vs average (midfielders) |
-| `output/viz4_lollipop_forwards_fw.html` | Diverging Lollipop | Q3 — Elite vs average (forwards) |
+| `viz1_match_outcomes.html` | Stacked Bar Chart | Q1 — Match outcome % per league |
+| `viz2_tactics_vs_success.html` | Scatter Plot + OLS trendline | Q1 — Tactical attributes vs season goal difference |
+| `viz3_skill_evolution.html` | Multi-Line Chart | Q2 — Player skill trends 2008–2016 |
+| `viz4_lollipop_all_players.html` | Diverging Lollipop | Q3 — Elite vs average (all players) |
+| `viz4_lollipop_defenders_df.html` | Diverging Lollipop | Q3 — Elite vs average (defenders) |
+| `viz4_lollipop_midfielders_mf.html` | Diverging Lollipop | Q3 — Elite vs average (midfielders) |
+| `viz4_lollipop_forwards_fw.html` | Diverging Lollipop | Q3 — Elite vs average (forwards) |
 
 ---
 
