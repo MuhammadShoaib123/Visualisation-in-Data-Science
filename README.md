@@ -48,9 +48,8 @@ interactive visualisations to answer data-driven questions about European footba
 ### 1. Get the dataset
 Download the **European Soccer Database** from Kaggle:  
 https://www.kaggle.com/datasets/hugomathien/soccer  
-Extract all CSV files into a local folder, e.g.:  
-`C:\your\path\VDS2526 Football\`
-Add the data to the /data folder in the working directory to ensure this works properly.
+Extract all CSV files into a local folder.  
+Add the dataset to the \data folder in the working directory to ensure this works properly.
 
 ### 2. Install dependencies
 
@@ -60,13 +59,7 @@ Install the required Python libraries before running the project:
 pip install plotly pandas numpy scipy statsmodels
 ```
 
-### 3. Update the data path
-Open `VDS2526_Group01_Football_Visualisations.py` and update **line 20**:
-```python
-path = r"C:\your\path\VDS2526 Football" + "\\"
-```
-
-### 4. Run the script
+### 3. Run the script
 ```bash
 python VDS2526_Group01_Football_Visualisations.py
 ```
