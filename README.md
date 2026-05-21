@@ -91,9 +91,8 @@ Open any `.html` file in a web browser — no server required.
 | Team | 299 | Team names |
 | League | 11 | League names |
 | PositionReference | 99 | Deriving player roles (GK/DF/MF/FW) |
-
-> ⚠️ CSV files are **not included** in this repository due to size.  
-> Download from Kaggle using the link above.
+ 
+> Download from Kaggle using the link above or use the zip data file (VDS2526 Football.zip) from blackboard.
 
 ---
 
