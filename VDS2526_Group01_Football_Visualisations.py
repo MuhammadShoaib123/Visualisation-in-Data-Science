@@ -1,8 +1,8 @@
-# ============================================================
 # VDS2526 — Group 1 | Football Dataset
 
 
-# %%── CELL 1: Install & Imports ────────────────────────────────
+# %% CELL 1: Install & Imports
+
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -10,12 +10,12 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pathlib import Path
 import plotly.io as pio
-pio.renderers.default = "browser"
 
+pio.renderers.default = "browser"
 print("Libraries imported successfully.")
 
 
-# %%── CELL 2: Load All Datasets ────────────────────────────────
+# %% CELL 2: Load Datasets
 
 path = ""
 
@@ -35,10 +35,13 @@ print(f"Team:              {team.shape}")
 
 
 # ════════════════════════════════════════════════════════════
-# VIZ 1 — Stacked Bar Chart: Match Outcomes Across Leagues
+# Stacked Bar Chart: Match Outcomes Across Leagues
+# Created by: Mansoor Khurram - 2505888
 # Research Question: Q1 / Task T1.1
 # ════════════════════════════════════════════════════════════
-# %%── CELL 3: Data Preparation ─────────────────────────────────
+
+
+# %% CELL 3: Data Preparation For Plot 1: Match Outcomes per League
 
 def get_outcome(row):
     if row["home_team_goal"] > row["away_team_goal"]:
@@ -67,11 +70,12 @@ hw_order = (
     .tolist()
 )
 
-print("Viz 1 data ready — outcome counts per league:")
-print(outcome_counts.groupby("outcome")["match_count"].sum())
+# print("Viz 1 data ready — outcome counts per league:")
+# print(outcome_counts.groupby("outcome")["match_count"].sum())
 
 
-# %%── CELL 4: Plot Viz 1 ───────────────────────────────────────
+# %% CELL 4: Plot 1
+
 color_map = {
     "Home Win": "#2980b9",   # Blue  — home advantage
     "Draw":     "#95a5a6",   # Grey  — neutral (NOT black; avoids invisible stacks)
@@ -127,14 +131,15 @@ fig1.add_annotation(
 )
 
 fig1.show()
-# Save for report screenshot / embedding
+
 fig1.write_html("viz1_match_outcomes.html")
 print("Viz 1 rendered and saved to viz1_match_outcomes.html")
 
 
 # ════════════════════════════════════════════════════════════
-# VIZ 2 — Scatter Plot: Tactical Attributes vs Goal Difference
-# Research Questions: Q1 / Tasks T1.2 + T1.3
+# Scatter Plot: Tactical Attributes vs Goal Difference
+# Created by: Yogesh More
+# Research Questions: Q1 / Tasks T1.2, T1.3
 #
 # PEER FEEDBACK FIX:
 #   - Y-axis = season goal difference (from Match.csv)
@@ -143,6 +148,8 @@ print("Viz 1 rendered and saved to viz1_match_outcomes.html")
 #   - Colour = performance tier (Top 4 / Mid / Bottom 4)
 #   - OLS trendline added
 # ════════════════════════════════════════════════════════════
+
+
 # %%── CELL 5: Data Preparation ─────────────────────────────────
 
 # Step 1: Season goal difference per team (home + away combined)
@@ -197,11 +204,12 @@ df_viz2 = team_season.merge(ta_agg, on=["team_api_id", "year"], how="inner")
 df_viz2 = df_viz2.merge(league[["id", "name"]], left_on="league_id", right_on="id", how="left")
 df_viz2 = df_viz2.merge(team[["team_api_id", "team_long_name"]], on="team_api_id", how="left")
 
-print(f"Viz 2 data ready — {len(df_viz2)} team-season records.")
-print(f"Tier distribution:\n{df_viz2['tier'].value_counts()}")
+# print(f"Viz 2 data ready — {len(df_viz2)} team-season records.")
+# print(f"Tier distribution:\n{df_viz2['tier'].value_counts()}")
 
 
-# %%── CELL 6: Plot Viz 2 ───────────────────────────────────────
+# %% CELL 6: Plot 2
+
 tier_colors = {
     "Top 4":    "#27ae60",  # Green  — successful teams
     "Mid":      "#bdc3c7",  # Grey   — mid-table
@@ -263,7 +271,8 @@ print("Viz 2 rendered and saved to viz2_tactics_vs_success.html")
 
 
 # ════════════════════════════════════════════════════════════
-# VIZ 3 — Multi-Line Chart: Player Skill Evolution 2008–2016
+# Multi-Line Chart: Player Skill Evolution 2008–2016
+# Created by: Murtaza
 # Research Question: Q2 / Tasks T2.1 + T2.2
 #
 # PEER FEEDBACK FIX:
@@ -273,12 +282,14 @@ print("Viz 2 rendered and saved to viz2_tactics_vs_success.html")
 #   - Year range filtered strictly to 2008–2016
 #   - Annotation on peak / largest change
 # ════════════════════════════════════════════════════════════
-# %%── CELL 7: Data Preparation ─────────────────────────────────
+
+
+# %% CELL 7: Data Preparation
 
 player_attr["date"] = pd.to_datetime(player_attr["date"], errors="coerce")
 player_attr["year"] = player_attr["date"].dt.year
 
-# Exactly 6 skills — one per category (operationalisation note in design report)
+# 6 skills — one per category (operationalisation note in design report)
 skill_cols = [
     "sprint_speed",     # Speed / Pace category
     "short_passing",    # Passing category
@@ -304,7 +315,7 @@ df_trends = (
     pa_clean.groupby("year")[skill_cols]
     .mean()
     .reset_index()
-    .query("year >= 2008 and year <= 2016")   # strictly 2008-2016
+    .query("year >= 2008 and year <= 2016")   # 2008-2016
 )
 
 df_long = df_trends.melt(
@@ -319,7 +330,7 @@ print("Viz 3 data ready — trend data shape:", df_trends.shape)
 print("Year range:", df_trends["year"].min(), "—", df_trends["year"].max())
 
 
-# %%── CELL 8: Plot Viz 3 ───────────────────────────────────────
+# %% CELL 8: Plot 3
 skill_colors = {
     "Sprint Speed (Speed)":          "#e74c3c",
     "Short Passing (Passing)":       "#2980b9",
@@ -377,7 +388,8 @@ print("Viz 3 rendered and saved to viz3_skill_evolution.html")
 
 
 # ════════════════════════════════════════════════════════════
-# VIZ 4 — Diverging Lollipop Chart: Elite vs Average by Role
+# Diverging Lollipop Chart: Elite vs Average by Role
+# Created by: Shoaib
 # Research Question: Q3 / Tasks T3.1 + T3.2
 #
 # PEER FEEDBACK FIX:
@@ -387,7 +399,9 @@ print("Viz 3 rendered and saved to viz3_skill_evolution.html")
 #   - Sorted by absolute difference (most distinguishing skill at top)
 #   - Top 2 skills annotated per role view
 # ════════════════════════════════════════════════════════════
-# %%── CELL 9: Derive Player Roles via PositionReference ────────
+
+
+# %% CELL 9: Derive Player Roles via PositionReference
 
 player_cols = [f"home_player_{i}" for i in range(1, 12)] + \
               [f"away_player_{i}" for i in range(1, 12)]
@@ -432,7 +446,7 @@ print(f"\nElite players:   {(pa_role['tier']=='Elite').sum():,} records")
 print(f"Average players: {(pa_role['tier']=='Average').sum():,} records")
 
 
-# %%── CELL 10: Data Preparation ────────────────────────────────
+# %% CELL 10: Data Preparation
 
 # 10 representative non-GK skills for Q3
 skills_q3 = [
@@ -457,10 +471,10 @@ roles_to_plot = {
 }
 
 diff_data = {label: compute_diff(df) for label, df in roles_to_plot.items()}
-print("\nDiff data computed for:", list(diff_data.keys()))
+# print("\nDiff data computed for:", list(diff_data.keys()))
 
 
-# %%── CELL 11: Plot Viz 4 — All 4 Role Views ───────────────────
+# %% CELL 11: Plot 4
 
 def plot_lollipop(title_suffix, diff_df):
     """Diverging lollipop chart: stems from 0, dots at diff value."""
@@ -526,7 +540,7 @@ for role_label, d_df in diff_data.items():
     fig.show()
     safe_name = role_label.lower().replace(" ", "_").replace("(", "").replace(")", "")
     fig.write_html(f"viz4_lollipop_{safe_name}.html")
-    print(f"  → {role_label} rendered and saved.")
+    # print(f"  → {role_label} rendered and saved.")
 
 
 # ════════════════════════════════════════════════════════════
