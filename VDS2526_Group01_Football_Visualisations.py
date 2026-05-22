@@ -95,7 +95,7 @@ fig1 = px.bar(
         "name": hw_order,
         "outcome": ["Home Win", "Draw", "Away Win"],
     },
-    title="Match Outcomes Across 11 European Leagues (2008–2016)",
+    title="Q1 - Match Outcomes Across 11 European Leagues (2008–2016)",
     labels={
         "name": "League",
         "percentage": "Match Outcome (%)",
